@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forge Training</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#090b10;
+    --panel:#12151c;
+    --panel2:#191d26;
+    --border:#2a303c;
+    --text:#f5f7fa;
+    --muted:#8992a3;
+    --accent:#ff3b3b;
+    --green:#41d68b;
+    --blue:#4ca7ff;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 4%;
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    background:rgba(9,11,16,.95);
+    backdrop-filter:blur(15px);
+    z-index:20;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.logo span{
+    color:var(--accent);
+}
+
+nav{
+    display:flex;
+    gap:10px;
+}
+
+nav button{
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    padding:10px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+nav button.active,
+nav button:hover{
+    background:var(--panel2);
+    color:white;
+}
+
+main{
+    width:min(1450px,94%);
+    margin:25px auto;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:20px;
+}
+
+.card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:18px;
+    border-radius:14px;
+}
+
+.stat .number{
+    font-size:26px;
+    font-weight:900;
+}
+
+.stat .label{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:4px;
+}
+
+.body-area{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.body-wrapper{
+    position:relative;
+    text-align:center;
+}
+
+.body-wrapper h3{
+    margin-bottom:10px;
+    color:var(--muted);
+}
+
+svg{
+    width:100%;
+    max-height:650px;
+}
+
+.muscle{
+    fill:#555b65;
+    stroke:#20242c;
+    stroke-width:2;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.muscle:hover{
+    stroke:#fff;
+    stroke-width:4;
+    filter:brightness(1.25);
+}
+
+#tooltip{
+    position:fixed;
+    pointer-events:none;
+    opacity:0;
+    background:#050608;
+    color:white;
+    padding:8px 12px;
+    border:1px solid var(--border);
+    border-radius:7px;
+    z-index:100;
+    font-size:13px;
+}
+
+button{
+    font-family:inherit;
+}
+
+.primary{
+    background:var(--accent);
+    color:white;
+    border:none;
+    padding:11px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:800;
+}
+
+.secondary{
+    background:var(--panel2);
+    color:white;
+    border:1px solid var(--border);
+    padding:10px 15px;
+    border-radius:9px;
+    cursor:pointer;
+}
+
+.danger{
+    background:#391719;
+    color:#ff7373;
+    border:1px solid #642326;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+input,select{
+    width:100%;
+    padding:11px;
+    background:#0c0f15;
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:white;
+}
+
+.form-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.workout-day{
+    margin-bottom:14px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+}
+
+.day-header{
+    padding:15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel2);
+}
+
+.exercise{
+    padding:14px 15px;
+    border-top:1px solid var(--border);
+}
+
+.exercise-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.exercise-name{
+    font-weight:800;
+}
+
+.exercise-info{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:4px;
+}
+
+.badge{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:50px;
+    background:#232933;
+    color:#cbd2de;
+    font-size:11px;
+    margin:4px 3px 0 0;
+}
+
+.recovery-list{
+    display:grid;
+    gap:10px;
+}
+
+.recovery-item{
+    background:var(--panel2);
+    padding:12px;
+    border-radius:10px;
+}
+
+.bar{
+    height:7px;
+    background:#292e37;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:8px;
+}
+
+.bar-inner{
+    height:100%;
+    background:var(--accent);
+}
+
+.history-row{
+    display:grid;
+    grid-template-columns:1.6fr .7fr .7fr .8fr;
+    padding:12px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.small{
+    font-size:12px;
+    color:var(--muted);
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.78);
+    z-index:200;
+    padding:20px;
+}
+
+.modal.active{
+    display:flex;
+}
+
+.modal-box{
+    width:min(750px,100%);
+    max-height:90vh;
+    overflow-y:auto;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+}
+
+.set-row{
+    display:grid;
+    grid-template-columns:70px 1fr 1fr;
+    gap:8px;
+    align-items:center;
+    margin-bottom:8px;
+}
+
+.empty{
+    padding:30px;
+    color:var(--muted);
+    text-align:center;
+}
+
+.today-card{
+    background:linear-gradient(135deg,#181b23,#111319);
+}
+
+.recommend{
+    padding:10px;
+    border-left:3px solid var(--green);
+    background:#102018;
+    border-radius:7px;
+    margin-top:10px;
+    font-size:13px;
+}
+
+.legend{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin:15px 0;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.legend span{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+@media(max-width:900px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .body-area{
+        grid-template-columns:1fr;
+    }
+
+    nav{
+        overflow:auto;
+    }
+
+    header{
+        align-items:flex-start;
+        gap:10px;
+        flex-direction:column;
+    }
+
+    .form-row{
+        grid-template-columns:1fr 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">FORGE<span>.</span></div>
+
+    <nav>
+        <button class="nav active" data-page="dashboard">Dashboard</button>
+        <button class="nav" data-page="planner">Workout Plan</button>
+        <button class="nav" data-page="history">History</button>
+    </nav>
+</header>
+
+<main>
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="page active">
+
+<div class="stats">
+    <div class="stat">
+        <div class="number" id="workoutsCompleted">0</div>
+        <div class="label">Workouts Logged</div>
+    </div>
+
+    <div class="stat">
+        <div class="number" id="weeklySets">0</div>
+        <div class="label">Sets This Week</div>
+    </div>
+
+    <div class="stat">
+        <div class="number" id="musclesRecovering">0</div>
+        <div class="label">Muscles Recovering</div>
+    </div>
+
+    <div class="stat">
+        <div class="number" id="trainingVolume">0</div>
+        <div class="label">Weekly Volume</div>
+    </div>
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>Muscle Recovery Map</h2>
+
+<div class="legend">
+<span><div class="dot" style="background:#ff2020"></div>Just trained</span>
+<span><div class="dot" style="background:#c94d4d"></div>Recovering</span>
+<span><div class="dot" style="background:#895454"></div>Almost recovered</span>
+<span><div class="dot" style="background:#555b65"></div>Ready</span>
+</div>
+
+<div class="body-area">
+
+<div class="body-wrapper">
+<h3>FRONT</h3>
+
+<svg viewBox="0 0 300 640">
+
+<!-- head -->
+<ellipse cx="150" cy="45" rx="30" ry="38" fill="#363b45"/>
+
+<!-- torso -->
+<path d="M105 90 Q150 70 195 90 L210 235 Q190 285 150 290 Q110 285 90 235Z"
+fill="#363b45"/>
+
+<!-- arms -->
+<path d="M100 100 Q70 110 60 170 L45 290 Q55 302 65 288 L85 185Z"
+fill="#363b45"/>
+<path d="M200 100 Q230 110 240 170 L255 290 Q245 302 235 288 L215 185Z"
+fill="#363b45"/>
+
+<!-- legs -->
+<path d="M110 280 L145 285 L140 440 L120 610 L85 610 L95 430Z"
+fill="#363b45"/>
+<path d="M190 280 L155 285 L160 440 L180 610 L215 610 L205 430Z"
+fill="#363b45"/>
+
+<!-- muscles -->
+
+<path id="upperChest" class="muscle" data-muscle="Upper Chest"
+d="M112 112 Q150 92 188 112 L180 140 Q150 125 120 140Z"/>
+
+<path id="chest" class="muscle" data-muscle="Chest"
+d="M120 142 Q150 128 180 142 L176 190 Q150 205 124 190Z"/>
+
+<path id="frontDeltsL" class="muscle" data-muscle="Front Delts"
+d="M103 105 Q85 110 80 135 Q92 145 105 135Z"/>
+
+<path id="frontDeltsR" class="muscle" data-muscle="Front Delts"
+d="M197 105 Q215 110 220 135 Q208 145 195 135Z"/>
+
+<path id="sideDeltsL" class="muscle" data-muscle="Side Delts"
+d="M82 112 Q68 125 66 150 L80 157 L93 130Z"/>
+
+<path id="sideDeltsR" class="muscle" data-muscle="Side Delts"
+d="M218 112 Q232 125 234 150 L220 157 L207 130Z"/>
+
+<path id="bicepsL" class="muscle" data-muscle="Biceps"
+d="M68 155 Q82 145 88 165 L78 220 Q64 222 60 205Z"/>
+
+<path id="bicepsR" class="muscle" data-muscle="Biceps"
+d="M232 155 Q218 145 212 165 L222 220 Q236 222 240 205Z"/>
+
+<path id="forearmsL" class="muscle" data-muscle="Forearms"
+d="M60 215 Q75 220 77 235 L62 287 Q53 295 47 282Z"/>
+
+<path id="forearmsR" class="muscle" data-muscle="Forearms"
+d="M240 215 Q225 220 223 235 L238 287 Q247 295 253 282Z"/>
+
+<path id="abs" class="muscle" data-muscle="Abs"
+d="M130 192 L170 192 L170 260 Q150 275 130 260Z"/>
+
+<path id="obliquesL" class="muscle" data-muscle="Obliques"
+d="M112 190 L130 195 L130 255 L112 240Z"/>
+
+<path id="obliquesR" class="muscle" data-muscle="Obliques"
+d="M188 190 L170 195 L170 255 L188 240Z"/>
+
+<path id="quadsL" class="muscle" data-muscle="Quads"
+d="M100 292 L142 292 L138 415 Q120 430 100 410Z"/>
+
+<path id="quadsR" class="muscle" data-muscle="Quads"
+d="M200 292 L158 292 L162 415 Q180 430 200 410Z"/>
+
+<path id="adductorsL" class="muscle" data-muscle="Adductors"
+d="M142 295 L150 300 L145 410 L136 400Z"/>
+
+<path id="adductorsR" class="muscle" data-muscle="Adductors"
+d="M158 295 L150 300 L155 410 L164 400Z"/>
+
+<path id="calvesFrontL" class="muscle" data-muscle="Tibialis"
+d="M103 435 L135 435 L125 580 L105 580Z"/>
+
+<path id="calvesFrontR" class="muscle" data-muscle="Tibialis"
+d="M197 435 L165 435 L175 580 L195 580Z"/>
+
+</svg>
+</div>
+
+<div class="body-wrapper">
+<h3>BACK</h3>
+
+<svg viewBox="0 0 300 640">
+
+<ellipse cx="150" cy="45" rx="30" ry="38" fill="#363b45"/>
+
+<path d="M105 90 Q150 70 195 90 L210 235 Q190 285 150 290 Q110 285 90 235Z"
+fill="#363b45"/>
+
+<path d="M100 100 Q70 110 60 170 L45 290 Q55 302 65 288 L85 185Z"
+fill="#363b45"/>
+
+<path d="M200 100 Q230 110 240 170 L255 290 Q245 302 235 288 L215 185Z"
+fill="#363b45"/>
+
+<path d="M110 280 L145 285 L140 440 L120 610 L85 610 L95 430Z"
+fill="#363b45"/>
+
+<path d="M190 280 L155 285 L160 440 L180 610 L215 610 L205 430Z"
+fill="#363b45"/>
+
+<path id="traps" class="muscle" data-muscle="Traps"
+d="M115 95 Q150 78 185 95 L175 135 Q150 150 125 135Z"/>
+
+<path id="rearDeltsL" class="muscle" data-muscle="Rear Delts"
+d="M105 105 Q85 108 78 135 L100 145Z"/>
+
+<path id="rearDeltsR" class="muscle" data-muscle="Rear Delts"
+d="M195 105 Q215 108 222 135 L200 145Z"/>
+
+<path id="upperBack" class="muscle" data-muscle="Upper Back"
+d="M115 135 L185 135 L178 175 Q150 190 122 175Z"/>
+
+<path id="latsL" class="muscle" data-muscle="Lats"
+d="M105 145 L125 170 L130 225 L105 245 L92 185Z"/>
+
+<path id="latsR" class="muscle" data-muscle="Lats"
+d="M195 145 L175 170 L170 225 L195 245 L208 185Z"/>
+
+<path id="lowerBack" class="muscle" data-muscle="Lower Back"
+d="M130 180 L170 180 L175 250 L125 250Z"/>
+
+<path id="tricepsL" class="muscle" data-muscle="Triceps"
+d="M72 150 Q85 145 90 165 L80 220 Q65 225 60 205Z"/>
+
+<path id="tricepsR" class="muscle" data-muscle="Triceps"
+d="M228 150 Q215 145 210 165 L220 220 Q235 225 240 205Z"/>
+
+<path id="forearmsBackL" class="muscle" data-muscle="Forearms"
+d="M60 215 Q75 220 77 235 L62 287 Q53 295 47 282Z"/>
+
+<path id="forearmsBackR" class="muscle" data-muscle="Forearms"
+d="M240 215 Q225 220 223 235 L238 287 Q247 295 253 282Z"/>
+
+<path id="glutesL" class="muscle" data-muscle="Glutes"
+d="M105 260 Q125 245 148 260 L145 310 Q120 320 102 300Z"/>
+
+<path id="glutesR" class="muscle" data-muscle="Glutes"
+d="M195 260 Q175 245 152 260 L155 310 Q180 320 198 300Z"/>
+
+<path id="hamstringsL" class="muscle" data-muscle="Hamstrings"
+d="M100 315 L143 315 L138 425 Q120 438 100 420Z"/>
+
+<path id="hamstringsR" class="muscle" data-muscle="Hamstrings"
+d="M200 315 L157 315 L162 425 Q180 438 200 420Z"/>
+
+<path id="calvesL" class="muscle" data-muscle="Calves"
+d="M100 435 Q120 425 137 445 L125 565 Q110 575 100 550Z"/>
+
+<path id="calvesR" class="muscle" data-muscle="Calves"
+d="M200 435 Q180 425 163 445 L175 565 Q190 575 200 550Z"/>
+
+</svg>
+</div>
+
+</div>
+</div>
+
+<div>
+
+<div class="card today-card">
+<h2>Today's Workout</h2>
+<div id="todayWorkout"></div>
+</div>
+
+<br>
+
+<div class="card">
+<h2>Muscle Recovery</h2>
+<div id="recoveryList" class="recovery-list"></div>
+</div>
+
+</div>
+</div>
+
+</section>
+
+
+<!-- WORKOUT PLANNER -->
+
+<section id="planner" class="page">
+
+<div class="card">
+
+<h2>Weekly Workout Plan</h2>
+
+<p class="small" style="margin-bottom:20px">
+Create your normal weekly workouts. They will automatically repeat every week.
+</p>
+
+<div class="form-row">
+<select id="exerciseDay">
+<option>Monday</option>
+<option>Tuesday</option>
+<option>Wednesday</option>
+<option>Thursday</option>
+<option>Friday</option>
+<option>Saturday</option>
+<option>Sunday</option>
+</select>
+
+<input id="exerciseName" placeholder="Exercise">
+
+<input id="exerciseSets" type="number" placeholder="Sets">
+
+<input id="exerciseReps" placeholder="Rep range e.g. 8-10">
+</div>
+
+<div class="form-row">
+
+<input id="exerciseWeight" type="number" placeholder="Starting weight">
+
+<select id="exerciseMuscle">
+<option>Upper Chest</option>
+<option>Chest</option>
+<option>Front Delts</option>
+<option>Side Delts</option>
+<option>Rear Delts</option>
+<option>Biceps</option>
+<option>Triceps</option>
+<option>Forearms</option>
+<option>Traps</option>
+<option>Upper Back</option>
+<option>Lats</option>
+<option>Lower Back</option>
+<option>Abs</option>
+<option>Obliques</option>
+<option>Glutes</option>
+<option>Quads</option>
+<option>Hamstrings</option>
+<option>Adductors</option>
+<option>Calves</option>
+<option>Tibialis</option>
+</select>
+
+<select id="secondaryMuscle">
+<option value="">No secondary muscle</option>
+<option>Upper Chest</option>
+<option>Chest</option>
+<option>Front Delts</option>
+<option>Side Delts</option>
+<option>Rear Delts</option>
+<option>Biceps</option>
+<option>Triceps</option>
+<option>Forearms</option>
+<option>Traps</option>
+<option>Upper Back</option>
+<option>Lats</option>
+<option>Lower Back</option>
+<option>Abs</option>
+<option>Obliques</option>
+<option>Glutes</option>
+<option>Quads</option>
+<option>Hamstrings</option>
+<option>Adductors</option>
+<option>Calves</option>
+<option>Tibialis</option>
+</select>
+
+<button class="primary" onclick="addExercise()">Add Exercise</button>
+
+</div>
+
+<div id="weeklyPlan"></div>
+
+</div>
+</section>
+
+
+<!-- HISTORY -->
+
+<section id="history" class="page">
+
+<div class="card">
+<h2>Workout History</h2>
+<div id="historyList"></div>
+</div>
+
+</section>
+
+</main>
+
+
+<div id="tooltip"></div>
+
+
+<!-- WORKOUT LOG MODAL -->
+
+<div id="logModal" class="modal">
+
+<div class="modal-box">
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<h2 id="logTitle">Log Workout</h2>
+<button class="secondary" onclick="closeModal()">Close</button>
+</div>
+
+<div id="logExercises"></div>
+
+<button class="primary" style="width:100%;margin-top:20px" onclick="finishWorkout()">
+Finish Workout
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+const days=[
+"Sunday",
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday",
+"Friday",
+"Saturday"
+];
+
+const recoveryHours={
+"Upper Chest":72,
+"Chest":72,
+"Front Delts":48,
+"Side Delts":48,
+"Rear Delts":48,
+"Biceps":48,
+"Triceps":48,
+"Forearms":36,
+"Traps":48,
+"Upper Back":72,
+"Lats":72,
+"Lower Back":72,
+"Abs":36,
+"Obliques":36,
+"Glutes":72,
+"Quads":72,
+"Hamstrings":72,
+"Adductors":60,
+"Calves":48,
+"Tibialis":36
+};
+
+let plan=JSON.parse(localStorage.getItem("forgePlan"))||{};
+let history=JSON.parse(localStorage.getItem("forgeHistory"))||[];
+let muscleRecovery=JSON.parse(localStorage.getItem("forgeRecovery"))||{};
+
+let currentWorkout=null;
+
+days.forEach(day=>{
+    if(!plan[day]) plan[day]=[];
+});
+
+function save(){
+    localStorage.setItem("forgePlan",JSON.stringify(plan));
+    localStorage.setItem("forgeHistory",JSON.stringify(history));
+    localStorage.setItem("forgeRecovery",JSON.stringify(muscleRecovery));
+}
+
+document.querySelectorAll(".nav").forEach(btn=>{
+    btn.onclick=()=>{
+        document.querySelectorAll(".nav").forEach(b=>b.classList.remove("active"));
+        document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.page).classList.add("active");
+
+        renderAll();
+    }
+});
+
+
+// -------------------------
+// MUSCLE TOOLTIP
+// -------------------------
+
+const tooltip=document.getElementById("tooltip");
+
+document.querySelectorAll(".muscle").forEach(muscle=>{
+
+    muscle.addEventListener("mousemove",e=>{
+        tooltip.innerText=muscle.dataset.muscle;
+        tooltip.style.opacity=1;
+        tooltip.style.left=e.clientX+15+"px";
+        tooltip.style.top=e.clientY+15+"px";
+    });
+
+    muscle.addEventListener("mouseleave",()=>{
+        tooltip.style.opacity=0;
+    });
+
+});
+
+
+// -------------------------
+// ADD EXERCISE
+// -------------------------
+
+function addExercise(){
+
+    const day=document.getElementById("exerciseDay").value;
+    const name=document.getElementById("exerciseName").value.trim();
+    const sets=parseInt(document.getElementById("exerciseSets").value);
+    const reps=document.getElementById("exerciseReps").value.trim();
+    const weight=parseFloat(document.getElementById("exerciseWeight").value)||0;
+    const muscle=document.getElementById("exerciseMuscle").value;
+    const secondary=document.getElementById("secondaryMuscle").value;
+
+    if(!name||!sets||!reps){
+        alert("Enter exercise name, sets and reps.");
+        return;
+    }
+
+    plan[day].push({
+        id:Date.now(),
+        name,
+        sets,
+        reps,
+        weight,
+        muscle,
+        secondary
+    });
+
+    save();
+    renderPlan();
+
+    document.getElementById("exerciseName").value="";
+    document.getElementById("exerciseSets").value="";
+    document.getElementById("exerciseReps").value="";
+    document.getElementById("exerciseWeight").value="";
+}
+
+
+// -------------------------
+// RENDER PLAN
+// -------------------------
+
+function renderPlan(){
+
+    const container=document.getElementById("weeklyPlan");
+    container.innerHTML="";
+
+    days.slice(1).concat("Sunday").forEach(day=>{
+
+        const wrapper=document.createElement("div");
+        wrapper.className="workout-day";
+
+        wrapper.innerHTML=`
+        <div class="day-header">
+            <strong>${day}</strong>
+            <span class="small">${plan[day].length} exercises</span>
+        </div>
+        `;
+
+        if(plan[day].length===0){
+            wrapper.innerHTML+=`<div class="empty">Rest day / no workout added</div>`;
+        }
+
+        plan[day].forEach((ex,index)=>{
+
+            const recommendation=getRecommendation(ex);
+
+            const el=document.createElement("div");
+            el.className="exercise";
+
+            el.innerHTML=`
+            <div class="exercise-top">
+
+                <div>
+                    <div class="exercise-name">${ex.name}</div>
+
+                    <div class="exercise-info">
+                    ${ex.sets} sets × ${ex.reps} reps @ ${ex.weight || "--"} lbs
+                    </div>
+
+                    <span class="badge">${ex.muscle}</span>
+                    ${ex.secondary ? `<span class="badge">${ex.secondary}</span>`:""}
+
+                    ${recommendation ? `
+                    <div class="recommend">
+                    Next target: ${recommendation}
+                    </div>
+                    `:""}
+                </div>
+
+                <button class="danger" onclick="deleteExercise('${day}',${index})">
+                Delete
+                </button>
+
+            </div>
+            `;
+
+            wrapper.appendChild(el);
+        });
+
+        container.appendChild(wrapper);
+    });
+}
+
+function deleteExercise(day,index){
+    plan[day].splice(index,1);
+    save();
+    renderAll();
+}
+
+
+// -------------------------
+// TODAY WORKOUT
+// -------------------------
+
+function renderToday(){
+
+    const today=days[new Date().getDay()];
+    const exercises=plan[today];
+
+    const container=document.getElementById("todayWorkout");
+
+    if(!exercises.length){
+
+        container.innerHTML=`
+        <div class="empty">
+        No workout planned for ${today}.
+        </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML=`
+    <div class="small">${today}</div>
+    <h3 style="margin:5px 0 15px">${exercises.length} exercises planned</h3>
+
+    ${exercises.map(ex=>`
+    <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <strong>${ex.name}</strong>
+        <div class="small">
+        ${ex.sets} × ${ex.reps} @ ${ex.weight || "--"} lbs
+        </div>
+    </div>
+    `).join("")}
+
+    <button class="primary"
+    style="width:100%;margin-top:15px"
+    onclick="openWorkout('${today}')">
+    Log Today's Workout
+    </button>
+    `;
+}
+
+
+// -------------------------
+// WORKOUT MODAL
+// -------------------------
+
+function openWorkout(day){
+
+    currentWorkout={
+        day,
+        date:new Date().toISOString(),
+        exercises:[]
+    };
+
+    document.getElementById("logTitle").innerText=`${day} Workout`;
+
+    const container=document.getElementById("logExercises");
+
+    container.innerHTML="";
+
+    plan[day].forEach((ex,index)=>{
+
+        const recommendation=getRecommendation(ex);
+
+        const wrap=document.createElement("div");
+
+        wrap.style.marginBottom="25px";
+
+        wrap.innerHTML=`
+
+        <h3>${ex.name}</h3>
+
+        <div class="small" style="margin-bottom:10px">
+        Planned: ${ex.sets} × ${ex.reps}
+        </div>
+
+        ${recommendation ?
+        `<div class="recommend">${recommendation}</div>`
+        :""}
+
+        <div style="margin-top:12px">
+
+        ${Array.from({length:ex.sets}).map((_,set)=>`
+
+        <div class="set-row">
+
+        <strong>Set ${set+1}</strong>
+
+        <input
+        type="number"
+        class="log-weight-${index}"
+        placeholder="Weight">
+
+        <input
+        type="number"
+        class="log-reps-${index}"
+        placeholder="Reps">
+
+        </div>
+
+        `).join("")}
+
+        </div>
+        `;
+
+        container.appendChild(wrap);
+    });
+
+    document.getElementById("logModal").classList.add("active");
+}
+
+function closeModal(){
+    document.getElementById("logModal").classList.remove("active");
+}
+
+
+// -------------------------
+// FINISH WORKOUT
+// -------------------------
+
+function finishWorkout(){
+
+    const exercises=plan[currentWorkout.day];
+
+    exercises.forEach((ex,index)=>{
+
+        const weights=[
+            ...document.querySelectorAll(`.log-weight-${index}`)
+        ];
+
+        const reps=[
+            ...document.querySelectorAll(`.log-reps-${index}`)
+        ];
+
+        const sets=[];
+
+        weights.forEach((input,i)=>{
+
+            const weight=parseFloat(input.value)||0;
+            const repsDone=parseInt(reps[i].value)||0;
+
+            if(weight>0 || repsDone>0){
+                sets.push({
+                    weight,
+                    reps:repsDone
+                });
+            }
+
+        });
+
+        if(sets.length){
+
+            currentWorkout.exercises.push({
+                exerciseId:ex.id,
+                name:ex.name,
+                muscle:ex.muscle,
+                secondary:ex.secondary,
+                sets
+            });
+
+            muscleRecovery[ex.muscle]=Date.now();
+
+            if(ex.secondary){
+                muscleRecovery[ex.secondary]=Date.now();
+            }
+
+            updateExerciseProgression(ex,sets);
+        }
+
+    });
+
+    history.push(currentWorkout);
+
+    save();
+
+    closeModal();
+
+    renderAll();
+
+    alert("Workout saved.");
+}
+
+
+// -------------------------
+// PROGRESSION LOGIC
+// -------------------------
+
+function parseRepRange(range){
+
+    if(range.includes("-")){
+        const parts=range.split("-").map(Number);
+
+        return{
+            min:parts[0],
+            max:parts[1]
+        };
+    }
+
+    const n=parseInt(range);
+
+    return{
+        min:n,
+        max:n
+    };
+}
+
+function updateExerciseProgression(ex,sets){
+
+    const target=parseRepRange(ex.reps);
+
+    const allTop=
+    sets.length>=ex.sets &&
+    sets.every(set=>set.reps>=target.max);
+
+    const belowMinimum=
+    sets.some(set=>set.reps<target.min);
+
+    if(allTop){
+
+        if(ex.weight>=100){
+            ex.weight+=5;
+        }else{
+            ex.weight+=2.5;
+        }
+
+    }else if(belowMinimum){
+
+        ex.weight=Math.max(0,ex.weight);
+
+    }
+
+}
+
+function getRecommendation(ex){
+
+    const logs=[];
+
+    history.forEach(workout=>{
+
+        workout.exercises.forEach(log=>{
+
+            if(log.exerciseId===ex.id){
+                logs.push(log);
+            }
+
+        });
+
+    });
+
+    if(!logs.length){
+        return `Start with ${ex.sets} sets × ${ex.reps} reps @ ${ex.weight || "your chosen weight"} lbs`;
+    }
+
+    const latest=logs[logs.length-1];
+
+    const target=parseRepRange(ex.reps);
+
+    const allTop=
+    latest.sets.length>=ex.sets &&
+    latest.sets.every(s=>s.reps>=target.max);
+
+    const low=
+    latest.sets.some(s=>s.reps<target.min);
+
+    if(allTop){
+        return `${ex.weight} lbs × ${target.min}-${target.max} — weight increased`;
+    }
+
+    if(low){
+        return `${ex.weight} lbs — keep weight and beat your previous reps`;
+    }
+
+    return `${ex.weight} lbs — try to reach ${target.max} reps on every set`;
+}
+
+
+// -------------------------
+// RECOVERY COLORS
+// -------------------------
+
+function updateMuscleMap(){
+
+    document.querySelectorAll(".muscle").forEach(el=>{
+
+        const muscle=el.dataset.muscle;
+
+        const last=muscleRecovery[muscle];
+
+        if(!last){
+
+            el.style.fill="#555b65";
+            return;
+
+        }
+
+        const hoursPassed=
+        (Date.now()-last)/(1000*60*60);
+
+        const recovery=
+        recoveryHours[muscle]||48;
+
+        const percent=
+        Math.min(hoursPassed/recovery,1);
+
+        if(percent>=1){
+
+            el.style.fill="#555b65";
+
+        }else{
+
+            const start=[255,32,32];
+            const end=[85,91,101];
+
+            const r=
+            Math.round(start[0]+(end[0]-start[0])*percent);
+
+            const g=
+            Math.round(start[1]+(end[1]-start[1])*percent);
+
+            const b=
+            Math.round(start[2]+(end[2]-start[2])*percent);
+
+            el.style.fill=`rgb(${r},${g},${b})`;
+        }
+
+    });
+
+}
+
+
+// -------------------------
+// RECOVERY LIST
+// -------------------------
+
+function renderRecovery(){
+
+    const container=document.getElementById("recoveryList");
+
+    const recovering=[];
+
+    Object.keys(muscleRecovery).forEach(muscle=>{
+
+        const hours=
+        (Date.now()-muscleRecovery[muscle])/(1000*60*60);
+
+        const total=recoveryHours[muscle]||48;
+
+        if(hours<total){
+
+            recovering.push({
+                muscle,
+                hours,
+                total,
+                percent:Math.min((hours/total)*100,100)
+            });
+
+        }
+
+    });
+
+    recovering.sort((a,b)=>a.percent-b.percent);
+
+    if(!recovering.length){
+
+        container.innerHTML=`
+        <div class="empty">All tracked muscles are recovered.</div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML=recovering.map(item=>{
+
+        const recoveryPercentage=
+        Math.round(item.percent);
+
+        const hoursLeft=
+        Math.ceil(item.total-item.hours);
+
+        return`
+        <div class="recovery-item">
+
+            <div style="display:flex;justify-content:space-between">
+                <strong>${item.muscle}</strong>
+                <span class="small">${recoveryPercentage}% recovered</span>
+            </div>
+
+            <div class="bar">
+                <div class="bar-inner"
+                style="width:${recoveryPercentage}%">
+                </div>
+            </div>
+
+            <div class="small" style="margin-top:6px">
+            ~${hoursLeft} hours until fully recovered
+            </div>
+
+        </div>
+        `;
+
+    }).join("");
+}
+
+
+// -------------------------
+// HISTORY
+// -------------------------
+
+function renderHistory(){
+
+    const container=document.getElementById("historyList");
+
+    if(!history.length){
+
+        container.innerHTML=`
+        <div class="empty">
+        No workouts logged yet.
+        </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML=
+    [...history].reverse().map(workout=>{
+
+        let totalVolume=0;
+        let sets=0;
+
+        workout.exercises.forEach(ex=>{
+
+            ex.sets.forEach(set=>{
+
+                totalVolume+=set.weight*set.reps;
+                sets++;
+
+            });
+
+        });
+
+        return`
+        <div style="padding:18px 0;border-bottom:1px solid var(--border)">
+
+            <div style="display:flex;justify-content:space-between">
+
+                <div>
+                    <strong>${workout.day}</strong>
+
+                    <div class="small">
+                    ${new Date(workout.date).toLocaleDateString()}
+                    </div>
+                </div>
+
+                <div style="text-align:right">
+
+                    <strong>${Math.round(totalVolume).toLocaleString()} lbs</strong>
+
+                    <div class="small">
+                    ${sets} working sets
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div style="margin-top:12px">
+
+            ${workout.exercises.map(ex=>`
+
+            <div style="margin-bottom:10px">
+
+                <strong>${ex.name}</strong>
+
+                <div class="small">
+
+                ${ex.sets.map(set=>
+                `${set.weight} × ${set.reps}`
+                ).join(" • ")}
+
+                </div>
+
+            </div>
+
+            `).join("")}
+
+            </div>
+
+        </div>
+        `;
+
+    }).join("");
+}
+
+
+// -------------------------
+// DASHBOARD STATS
+// -------------------------
+
+function renderStats(){
+
+    document.getElementById("workoutsCompleted").innerText=
+    history.length;
+
+    const now=new Date();
+
+    const weekAgo=
+    new Date(now.getTime()-7*24*60*60*1000);
+
+    let sets=0;
+    let volume=0;
+
+    history.forEach(workout=>{
+
+        if(new Date(workout.date)>=weekAgo){
+
+            workout.exercises.forEach(ex=>{
+
+                ex.sets.forEach(set=>{
+
+                    sets++;
+                    volume+=set.weight*set.reps;
+
+                });
+
+            });
+
+        }
+
+    });
+
+    document.getElementById("weeklySets").innerText=
+    sets;
+
+    document.getElementById("trainingVolume").innerText=
+    volume>1000
+    ? Math.round(volume/1000)+"k"
+    :Math.round(volume);
+
+    let recovering=0;
+
+    Object.keys(muscleRecovery).forEach(muscle=>{
+
+        const hours=
+        (Date.now()-muscleRecovery[muscle])/(1000*60*60);
+
+        if(hours<(recoveryHours[muscle]||48)){
+            recovering++;
+        }
+
+    });
+
+    document.getElementById("musclesRecovering").innerText=
+    recovering;
+
+}
+
+
+// -------------------------
+// RENDER EVERYTHING
+// -------------------------
+
+function renderAll(){
+
+    renderPlan();
+    renderToday();
+    renderRecovery();
+    renderHistory();
+    renderStats();
+    updateMuscleMap();
+
+}
+
+renderAll();
+
+setInterval(()=>{
+    updateMuscleMap();
+    renderRecovery();
+    renderStats();
+},60000);
+
+</script>
+
+</body>
+</html>
